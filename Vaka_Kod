@@ -1,0 +1,73 @@
+#include "HX711.h"
+#include "Nextion.h"
+#include "SoftwareSerial.h"
+
+
+
+Text t0 = NextText(0 , 1, "t0");// t0 nextion editordeki text komponentinin adı.
+
+
+HX711 scale(82, 83);
+
+float calibration_factor = 807;// kalbirasyon
+float units;
+
+SoftwareSerial mySerial(2, 3);
+
+void setup() {
+
+  Serial.begin(9600);
+  Next_Inıt();//Burada nextion kutuphane baslatiyoruz
+
+  nextSerail.begin(115200);//115200 olmasının nedeni ekranın çalışma boundrate'i o.
+  
+ /* kalbirasyon icin serial monitordenSerial.begin(9600);
+  Serial.println("HX711 calibration sketch");
+  Serial.println("Remove all weight from scale");
+  Serial.println("After readings begin, place known weight on scale");
+  Serial.println("Press + or a to increase calibration factor");
+  Serial.println("Press - or z to decrease calibration factor");*/
+
+  scale.set_scale();// Kalibrasyon faktörü tanımlama
+  scale.tare();// ölçeği sıfırlama.
+}
+
+void loop() {
+
+  scale.set_scale(calibration_factor); 
+
+  Serial.print("Reading: ");
+  units = scale.get_units(), 10;
+  
+  if (units < 0)
+  {
+    units = 0.00;
+  }
+  t0.set.Text(" grams : ");
+  delay(1000);
+  t0.set.Text(units);
+  delay(1000);
+
+
+    
+ /* 
+  Serial.print(units);
+  Serial.print(" grams"); 
+  Serial.print(" calibration_factor: ");
+  Serial.print(calibration_factor);
+  Serial.println();
+  delay(100);
+  */
+ /*
+  if(Serial.available())//Kalibrasyon ayarı yaparken, kalibrasyon faktörünü + veya - ile değiştireceğiz 
+  {
+    char temp = Serial.read();
+    if(temp == '+')
+      calibration_factor += 1;
+    else if(temp == '-')
+      calibration_factor -= 1;
+  }
+*/
+  
+}
+
